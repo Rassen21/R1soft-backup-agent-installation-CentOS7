@@ -1,0 +1,39 @@
+--- 
+- hosts: all
+  connection: ssh
+  become: yes
+  become_method: sudo
+  gather_facts: no
+  tasks:
+    - name: Copy R1soft.repo from Remote Server
+      copy:
+        src: /etc/yum.repos.d/r1soft.repo
+        dest: /etc/yum.repos.d/
+        owner: root
+        group: root
+        
+    - name: Install R1soft back up Agent on Remote System
+      wait_for:
+        path: /etc/yum.repos.d/r1soft.repo
+        state: present
+    
+    - yum: 
+        name: serverbackup-enterprise-agent
+        state: installed  
+
+    - name: Start and Enable R1soft agent on Remote Server
+      systemd:
+        name: cdp-agent 
+        state: started 
+        enabled: yes 
+
+    - name: Opening appropriate port on Remote system for agent
+      firewalld: 
+        port: 1167/tcp
+        permanent: true
+        state: enabled
+        zone: public  
+
+
+
+
