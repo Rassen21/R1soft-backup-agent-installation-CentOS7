@@ -9,8 +9,8 @@
       copy:
         src: /etc/yum.repos.d/r1soft.repo
         dest: /etc/yum.repos.d/
-        owner: root
-        group: root
+        
+        
         
     - name: Install R1soft back up Agent on Remote System
       wait_for:
